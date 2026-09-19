@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TuneFinder — descubra novos músicos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- TELA DE AUTENTICAÇÃO -->
+<section id="auth-screen" class="screen">
+  <div class="auth-wrap">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <h1>TuneFinder</h1>
+      <p class="tagline">sintonize seus favoritos, descubra o próximo</p>
+    </div>
+
+    <div class="auth-card">
+      <div class="auth-tabs" role="tablist">
+        <button class="auth-tab is-active" data-tab="login" role="tab" aria-selected="true">Entrar</button>
+        <button class="auth-tab" data-tab="register" role="tab" aria-selected="false">Criar conta</button>
+      </div>
+
+      <form id="login-form" class="auth-form" novalidate>
+        <label for="login-username">Usuário</label>
+        <input type="text" id="login-username" autocomplete="username" required>
+
+        <label for="login-password">Senha</label>
+        <input type="password" id="login-password" autocomplete="current-password" required>
+
+        <p class="form-error" id="login-error" role="alert"></p>
+        <button type="submit" class="btn btn-primary">Entrar</button>
+      </form>
+
+      <form id="register-form" class="auth-form is-hidden" novalidate>
+        <label for="register-username">Escolha um usuário</label>
+        <input type="text" id="register-username" autocomplete="username" required>
+
+        <label for="register-password">Crie uma senha</label>
+        <input type="password" id="register-password" autocomplete="new-password" required>
+
+        <label for="register-password-confirm">Confirme a senha</label>
+        <input type="password" id="register-password-confirm" autocomplete="new-password" required>
+
+        <p class="form-error" id="register-error" role="alert"></p>
+        <button type="submit" class="btn btn-primary">Criar conta</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- APLICAÇÃO PRINCIPAL -->
+<section id="app-screen" class="screen is-hidden">
+  <header class="app-header">
+    <div class="header-left">
+      <span class="brand-mark small" aria-hidden="true"></span>
+      <span class="header-title">TuneFinder</span>
+    </div>
+    <nav class="header-nav">
+      <button class="nav-btn is-active" data-view="favorites">Favoritos</button>
+      <button class="nav-btn" data-view="discovery">Descobrir</button>
+    </nav>
+    <div class="header-right">
+      <span id="current-user" class="current-user"></span>
+      <button id="logout-btn" class="btn btn-ghost">Sair</button>
+    </div>
+  </header>
+
+  <div class="tuning-line" aria-hidden="true"></div>
+
+  <!-- VIEW: FAVORITOS -->
+  <main id="view-favorites" class="view">
+    <div class="view-heading favorites-heading">
+      <div>
+        <h2>Seus favoritos</h2>
+        <p class="view-sub">A base do seu rádio pessoal. Adicione quem você já ama.</p>
+      </div>
+      <button id="go-to-search-btn" class="btn btn-primary">Buscar artista</button>
+    </div>
+
+    <p id="favorites-status" class="view-status is-hidden"></p>
+
+    <div id="favorites-empty" class="empty-state is-hidden">
+      <p>Nenhum favorito ainda.</p>
+      <p class="empty-sub">Busque um artista para começar sua coleção.</p>
+    </div>
+
+    <ul id="favorites-grid" class="record-grid"></ul>
+  </main>
+
+  <!-- VIEW: BUSCAR ARTISTA -->
+  <main id="view-search" class="view is-hidden">
+    <button id="back-to-favorites-btn" class="btn-back">‹ Voltar aos favoritos</button>
+
+    <div class="view-heading">
+      <h2>Buscar artista</h2>
+      <p class="view-sub">Digite um nome e escolha quem entra na sua coleção.</p>
+    </div>
+
+    <form id="search-form" class="search-form">
+      <input type="text" id="search-input" placeholder="Nome do artista..." autocomplete="off" required>
+      <button type="submit" class="btn btn-primary" id="search-submit-btn">Buscar</button>
+    </form>
+
+    <p id="search-status" class="view-status is-hidden"></p>
+
+    <ul id="search-results-grid" class="record-grid"></ul>
+  </main>
+
+  <!-- VIEW: DESCOBRIR -->
+  <main id="view-discovery" class="view is-hidden">
+    <div class="view-heading">
+      <h2>Descobrir</h2>
+      <p class="view-sub">Selecione um ou mais favoritos e descubra novos artistas a partir deles.</p>
+    </div>
+
+    <div id="discovery-empty" class="empty-state is-hidden">
+      <p>Você ainda não tem favoritos.</p>
+      <p class="empty-sub">Vá até a aba Favoritos e adicione ao menos um artista.</p>
+    </div>
+
+    <ul id="discovery-dial" class="dial-row"></ul>
+
+    <button id="discovery-submit-btn" class="btn btn-primary" disabled>Descobrir novos artistas</button>
+
+    <p id="discovery-status" class="view-status is-hidden"></p>
+
+    <div id="discovery-results" class="discovery-results is-hidden">
+      <p class="results-caption">A partir de <span id="discovery-source-name"></span></p>
+      <ul id="discovery-grid" class="record-grid"></ul>
+    </div>
+  </main>
+</section>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

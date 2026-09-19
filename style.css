@@ -1,0 +1,539 @@
+/* =========================================================
+   TuneFinder — design tokens
+   Conceito: painel de um rádio/tuner vintage. Fundo tinta-azul,
+   ponteiro âmbar, agulha coral, "discos" circulares representando
+   artistas. Serifada com personalidade para títulos, sans técnica
+   para interface.
+   ========================================================= */
+
+:root {
+  --ink: #1c2130;
+  --ink-2: #171b27;
+  --panel: #262c3f;
+  --panel-2: #2f3650;
+  --line: #3b4258;
+  --paper: #f1ecdd;
+  --paper-dim: #c9c4b4;
+  --amber: #e3a23c;
+  --amber-dim: #b98232;
+  --coral: #e2604a;
+  --teal: #4f9d92;
+  --violet: #8b7ec8;
+
+  --font-display: "Fraunces", serif;
+  --font-body: "IBM Plex Sans", sans-serif;
+
+  --radius-record: 50%;
+  --radius-card: 6px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  margin: 0;
+}
+
+button, input {
+  font-family: var(--font-body);
+}
+
+.is-hidden { display: none !important; }
+
+/* focus visibility */
+a:focus-visible, button:focus-visible, input:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+/* =========================================================
+   Botões / inputs genéricos
+   ========================================================= */
+
+.btn {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.7rem 1.3rem;
+  border-radius: var(--radius-card);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-primary {
+  background: var(--amber);
+  color: var(--ink-2);
+}
+.btn-primary:hover:not(:disabled) { background: #edb457; }
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--paper-dim);
+}
+.btn-ghost:hover { border-color: var(--paper-dim); color: var(--paper); }
+
+.btn-remove {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--paper-dim);
+  font-size: 0.78rem;
+  padding: 0.4rem 0.7rem;
+}
+.btn-remove:hover { border-color: var(--coral); color: var(--coral); }
+
+.btn-add-small {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  color: var(--paper);
+  font-size: 0.78rem;
+  padding: 0.4rem 0.7rem;
+}
+.btn-add-small:hover { border-color: var(--amber); color: var(--amber); }
+
+input[type="text"], input[type="password"] {
+  width: 100%;
+  background: var(--ink-2);
+  border: 1px solid var(--line);
+  color: var(--paper);
+  border-radius: var(--radius-card);
+  padding: 0.7rem 0.9rem;
+  font-size: 0.95rem;
+}
+input[type="text"]::placeholder, input[type="password"]::placeholder {
+  color: #5b6178;
+}
+input[type="text"]:focus, input[type="password"]:focus {
+  border-color: var(--amber);
+}
+
+/* =========================================================
+   Tela de autenticação
+   ========================================================= */
+
+#auth-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.25rem;
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(227,162,60,0.08), transparent 55%),
+    radial-gradient(ellipse at 85% 90%, rgba(226,96,74,0.08), transparent 55%),
+    var(--ink);
+}
+
+.auth-wrap {
+  width: 100%;
+  max-width: 380px;
+}
+
+.brand {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.brand-mark {
+  display: inline-block;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, var(--ink-2) 0 6px, transparent 7px),
+    repeating-radial-gradient(circle at center, var(--amber) 0 1.5px, transparent 1.5px 5px);
+  margin-bottom: 0.9rem;
+  border: 1px solid var(--line);
+}
+.brand-mark.small {
+  width: 26px;
+  height: 26px;
+  margin-bottom: 0;
+}
+
+.brand h1 {
+  font-size: 1.9rem;
+  letter-spacing: -0.01em;
+  color: var(--paper);
+}
+
+.tagline {
+  color: var(--paper-dim);
+  font-size: 0.88rem;
+  margin-top: 0.4rem;
+}
+
+.auth-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 1.5rem;
+}
+
+.auth-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 1.4rem;
+}
+
+.auth-tab {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--paper-dim);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.6rem 0;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.auth-tab.is-active {
+  color: var(--amber);
+  border-bottom-color: var(--amber);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.auth-form label {
+  font-size: 0.8rem;
+  color: var(--paper-dim);
+  margin-top: 0.7rem;
+}
+
+.auth-form .btn { margin-top: 1.2rem; }
+
+.form-error {
+  color: var(--coral);
+  font-size: 0.82rem;
+  min-height: 1.1em;
+  margin: 0.5rem 0 0;
+}
+
+/* =========================================================
+   Cabeçalho do app
+   ========================================================= */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem 1.75rem;
+  background: var(--ink-2);
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.header-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.15rem;
+}
+
+.header-nav {
+  display: flex;
+  gap: 0.4rem;
+  margin-right: auto;
+}
+
+.nav-btn {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--paper-dim);
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.nav-btn:hover { color: var(--paper); }
+.nav-btn.is-active {
+  color: var(--ink-2);
+  background: var(--amber);
+  font-weight: 600;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.current-user {
+  font-size: 0.85rem;
+  color: var(--paper-dim);
+}
+
+.tuning-line {
+  height: 1px;
+  background: repeating-linear-gradient(
+    to right,
+    var(--line) 0 6px,
+    transparent 6px 12px
+  );
+}
+
+/* =========================================================
+   Views principais
+   ========================================================= */
+
+.view {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 2.25rem 1.75rem 4rem;
+}
+
+.view-heading h2 {
+  font-size: 1.7rem;
+  color: var(--paper);
+}
+
+.view-sub {
+  color: var(--paper-dim);
+  font-size: 0.92rem;
+  margin: 0.4rem 0 1.8rem;
+}
+
+.favorites-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.favorites-heading .btn { flex-shrink: 0; }
+
+/* Status de carregamento / erro, comum às views assíncronas */
+
+.view-status {
+  font-size: 0.88rem;
+  color: var(--paper-dim);
+  margin: -0.8rem 0 1.4rem;
+}
+.view-status.is-error { color: var(--coral); }
+
+/* Tela de busca de artista */
+
+.btn-back {
+  background: none;
+  border: none;
+  color: var(--paper-dim);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 1.2rem;
+}
+.btn-back:hover { color: var(--amber); }
+
+.search-form {
+  display: flex;
+  gap: 0.7rem;
+  margin-bottom: 1.4rem;
+}
+.search-form input { flex: 1; }
+
+/* Grid de "discos" (cards de artista) */
+
+.record-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 1.1rem;
+}
+
+.record-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.7rem;
+}
+
+.record-disc {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  position: relative;
+  background:
+    radial-gradient(circle at center, var(--ink-2) 0 9px, transparent 9.5px),
+    repeating-radial-gradient(circle at center, var(--disc-color, var(--amber)) 0 2px, transparent 2px 6px);
+  border: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+/* Quando a busca externa retorna uma foto do artista, ela substitui o
+   desenho do disco, mas mantém o mesmo tamanho/moldura. */
+.record-photo {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.record-card.is-added .btn-add-small {
+  color: var(--teal);
+  border-color: var(--teal);
+}
+
+.record-name {
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--paper);
+  line-height: 1.25;
+}
+
+.record-genre {
+  font-size: 0.76rem;
+  color: var(--paper-dim);
+}
+
+.record-card .btn-remove,
+.record-card .btn-add-small {
+  margin-top: 0.2rem;
+}
+
+/* Estado vazio */
+
+.empty-state {
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-card);
+  padding: 2.2rem 1.5rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.empty-state p { margin: 0; color: var(--paper); font-size: 0.95rem; }
+.empty-state .empty-sub { color: var(--paper-dim); font-size: 0.85rem; margin-top: 0.35rem; }
+
+/* Dial de seleção (Descobrir) */
+
+.dial-row {
+  list-style: none;
+  margin: 0 0 1.6rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+#discovery-submit-btn {
+  margin: 0 0 1.4rem;
+}
+
+.dial-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem 0.45rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: var(--paper);
+}
+
+.dial-chip .mini-disc {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, var(--ink-2) 0 3px, transparent 3.5px),
+    repeating-radial-gradient(circle at center, var(--disc-color, var(--amber)) 0 1px, transparent 1px 3px);
+  border: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.dial-chip:hover { border-color: var(--paper-dim); }
+.dial-chip.is-selected {
+  border-color: var(--amber);
+  background: rgba(227, 162, 60, 0.12);
+}
+
+.discovery-results { margin-top: 1rem; }
+
+.results-caption {
+  font-size: 0.85rem;
+  color: var(--paper-dim);
+  margin: 0 0 1rem;
+}
+.results-caption span {
+  color: var(--amber);
+  font-weight: 600;
+}
+
+/* Toast */
+
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translate(-50%, 20px);
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  color: var(--paper);
+  padding: 0.7rem 1.1rem;
+  border-radius: var(--radius-card);
+  font-size: 0.86rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 50;
+}
+.toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* =========================================================
+   Responsivo
+   ========================================================= */
+
+@media (max-width: 640px) {
+  .app-header {
+    padding: 0.9rem 1.1rem;
+  }
+  .header-nav { order: 3; width: 100%; margin: 0.6rem 0 0; }
+  .view { padding: 1.5rem 1.1rem 3rem; }
+  .add-artist-row { flex-direction: column; }
+  .add-artist-row .btn { align-self: flex-start; }
+}
