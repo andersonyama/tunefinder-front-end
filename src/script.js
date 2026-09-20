@@ -15,18 +15,10 @@ const ENDPOINTS = {
   recommend: "recommend",
 };
 
-// A autenticação agora é validada por cookie de sessão (HttpOnly),
-// então o front não guarda nem manda token nenhum — o navegador
-// cuida de enviar o cookie sozinho em toda chamada, desde que a
-// requisição use credentials: "include" (ver apiFetch abaixo).
-//
-// IMPORTANTE no backend: se API_BASE_URL for um domínio diferente do
-// domínio onde essa página é servida, o CORS precisa responder
-// "Access-Control-Allow-Credentials: true" e um
-// "Access-Control-Allow-Origin" com a origem exata (nunca "*").
-// O cookie de sessão também deve ter os atributos adequados
-// (Secure, SameSite=None se for cross-site, etc).
-//
+// Limite de artistas que podem ser enviados de uma vez para o
+// endpoint "recommend", pra não sobrecarregar o backend.
+const MAX_DISCOVERY_SELECTION = 10;
+
 // Como o JS não consegue ler um cookie HttpOnly, guardamos só o
 // username no localStorage — apenas para exibição na tela e para
 // saber que "provavelmente" há uma sessão ativa ao recarregar a
@@ -154,9 +146,6 @@ async function apiSearchArtists(query) {
 }
 
 /* --- recomendação a partir de artistas favoritos selecionados --- */
-// AJUSTE AQUI: assumi POST { artist_ids: [...] } devolvendo um array
-// de artistas (ou { results: [...] } / { artists: [...] }). Ajuste o
-// corpo do body ou a leitura da resposta se o seu contrato for outro.
 async function apiRecommend(artistIds) {
   const data = await apiFetch(ENDPOINTS.recommend, {
     method: "POST",
@@ -582,8 +571,15 @@ function renderDiscoveryDial() {
     chip.append(disc, label);
 
     const toggle = () => {
-      if (selectedDiscoveryIds.has(artist.id)) selectedDiscoveryIds.delete(artist.id);
-      else selectedDiscoveryIds.add(artist.id);
+      if (selectedDiscoveryIds.has(artist.id)) {
+        selectedDiscoveryIds.delete(artist.id);
+      } else {
+        if (selectedDiscoveryIds.size >= MAX_DISCOVERY_SELECTION) {
+          showToast(`Você pode selecionar no máximo ${MAX_DISCOVERY_SELECTION} artistas por vez.`);
+          return;
+        }
+        selectedDiscoveryIds.add(artist.id);
+      }
       renderDiscoveryDial();
     };
     chip.addEventListener("click", toggle);
@@ -600,6 +596,15 @@ function renderDiscoveryDial() {
 discoverySubmitBtn.addEventListener("click", async () => {
   const selectedIds = [...selectedDiscoveryIds];
   if (selectedIds.length === 0) return;
+
+  if (selectedIds.length > MAX_DISCOVERY_SELECTION) {
+    setStatus(
+      "discovery-status",
+      `Selecione no máximo ${MAX_DISCOVERY_SELECTION} artistas por vez (você marcou ${selectedIds.length}).`,
+      true
+    );
+    return;
+  }
 
   const results = document.getElementById("discovery-results");
   const grid = document.getElementById("discovery-grid");
