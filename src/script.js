@@ -2,7 +2,7 @@
    CONFIGURAÇÃO DA API
    ========================================================= */
 
-const API_BASE_URL = "http://127.0.0.1:5000/";
+const API_BASE_URL = "http://127.0.0.1:5000";
 
 const ARTIST_SEARCH_PARAM = "artist";
 
@@ -102,7 +102,7 @@ async function apiRegister(username, password) {
     method: "POST",
     body: JSON.stringify({ username, password }),
   });
-  return { username: data?.username || username };
+  return { username: data?.id || username };
 }
 
 async function apiLogin(username, password) {
@@ -110,51 +110,37 @@ async function apiLogin(username, password) {
     method: "POST",
     body: JSON.stringify({ username, password }),
   });
-  return { username: data?.username || username };
+  return { username: data?.id || username };
 }
 
 async function apiLogout() {
   await apiFetch(ENDPOINTS.logout, { method: "POST" });
 }
 
-/* --- chamadas de favoritos --- */
-// AJUSTE AQUI: assumi que GET fav_artist devolve um array de artistas
-// (ou um objeto { favorites: [...] }), e que cada artista tem pelo
-// menos id/name/genre. Ajuste normalizeArtist() se os campos forem
-// diferentes.
 async function apiGetFavorites() {
   const data = await apiFetch(ENDPOINTS.favorites, { method: "GET" });
-  const list = Array.isArray(data) ? data : (data?.favorites || []);
+  const list = Array.isArray(data) ? data : (data?.favorite_artists || []);
   return list.map(normalizeArtist);
 }
 
-// AJUSTE AQUI: assumi que o POST espera { artist_id, name, genre, image_url }.
 async function apiAddFavorite(artist) {
   return apiFetch(ENDPOINTS.favorites, {
     method: "POST",
     body: JSON.stringify({
-      artist_id: artist.id,
-      name: artist.name,
-      genre: artist.genres.join(", "),
-      image_url: artist.image || undefined,
+      id_artist: artist.id,
+      artist_name: artist.name
     }),
   });
 }
 
-// AJUSTE AQUI: assumi que o DELETE usa o mesmo endpoint "fav_artist"
-// com o id do artista no corpo da requisição ({ artist_id }). Se seu
-// backend espera o id na URL (ex: fav_artist/123) ou como querystring,
-// troque a linha do fetch abaixo.
 async function apiRemoveFavorite(artistId) {
   return apiFetch(ENDPOINTS.favorites, {
     method: "DELETE",
-    body: JSON.stringify({ artist_id: artistId }),
+    body: JSON.stringify({ id_artist: artistId }),
   });
 }
 
 /* --- busca de artista no sistema externo --- */
-// AJUSTE AQUI: endpoint, nome do parâmetro e formato da resposta são
-// suposições — veja o topo do arquivo.
 async function apiSearchArtists(query) {
   const data = await apiFetch(ENDPOINTS.artist, {
     method: "GET",
@@ -183,9 +169,7 @@ async function apiRecommend(artistIds) {
 /**
  * Normaliza um artista vindo de qualquer endpoint (busca externa ou
  * favoritos) para o formato interno usado pela UI:
- * { id, name, genres: string[], image: string|null, color: string }
- * AJUSTE AQUI se os nomes dos campos do seu backend forem diferentes
- * (ex: artist_id em vez de id, artist_name em vez de name...).
+ * { id, name, color: string }
  */
 const PALETTE = ["#e3a23c", "#e2604a", "#4f9d92", "#8b7ec8"];
 
@@ -196,15 +180,10 @@ function colorForId(id) {
 }
 
 function normalizeArtist(raw) {
-  const id = String(raw.id ?? raw.artist_id ?? raw.name);
+  const id = String(raw.id ?? raw.id_artist ?? raw.mbid ?? raw.name);
   const name = raw.name ?? raw.artist_name ?? "Artista sem nome";
-  let genres = [];
-  if (Array.isArray(raw.genres)) genres = raw.genres;
-  else if (Array.isArray(raw.genre)) genres = raw.genre;
-  else if (typeof raw.genre === "string" && raw.genre) genres = raw.genre.split(",").map(g => g.trim());
-  const image = raw.image_url || raw.image || raw.photo || null;
-
-  return { id, name, genres, image, color: colorForId(id) };
+  
+  return { id, name, color: colorForId(id) };
 }
 
 /* -----------------------------------------------------------
@@ -450,31 +429,15 @@ function buildRecordCard(artist, { removable = false, addable = false, alreadyAd
   const li = document.createElement("li");
   li.className = "record-card";
 
-  if (artist.image) {
-    const img = document.createElement("img");
-    img.className = "record-photo";
-    img.src = artist.image;
-    img.alt = artist.name;
-    img.loading = "lazy";
-    li.appendChild(img);
-  } else {
-    const disc = document.createElement("div");
-    disc.className = "record-disc";
-    disc.style.setProperty("--disc-color", artist.color);
-    li.appendChild(disc);
-  }
+  const disc = document.createElement("div");
+  disc.className = "record-disc";
+  disc.style.setProperty("--disc-color", artist.color);
+  li.appendChild(disc);
 
   const name = document.createElement("p");
   name.className = "record-name";
   name.textContent = artist.name;
   li.appendChild(name);
-
-  if (artist.genres.length) {
-    const genre = document.createElement("p");
-    genre.className = "record-genre";
-    genre.textContent = artist.genres.join(" · ");
-    li.appendChild(genre);
-  }
 
   if (removable) {
     const btn = document.createElement("button");
