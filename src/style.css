@@ -1,11 +1,3 @@
-/* =========================================================
-   TuneFinder — design tokens
-   Conceito: painel de um rádio/tuner vintage. Fundo tinta-azul,
-   ponteiro âmbar, agulha coral, "discos" circulares representando
-   artistas. Serifada com personalidade para títulos, sans técnica
-   para interface.
-   ========================================================= */
-
 :root {
   --ink: #1c2130;
   --ink-2: #171b27;
@@ -430,6 +422,37 @@ input[type="text"]:focus, input[type="password"]:focus {
 .record-card .btn-remove,
 .record-card .btn-add-small {
   margin-top: 0.2rem;
+}
+
+/* Nota pessoal editável */
+
+.record-note-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.record-note {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--paper-dim);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.note-input {
+  width: 100%;
+}
+
+.note-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+.note-actions .btn-add-small,
+.note-actions .btn-remove {
+  margin-top: 0;
 }
 
 /* Estado vazio */

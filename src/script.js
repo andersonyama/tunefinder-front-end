@@ -120,7 +120,8 @@ async function apiAddFavorite(artist) {
     method: "POST",
     body: JSON.stringify({
       id_artist: artist.id,
-      artist_name: artist.name
+      artist_name: artist.name,
+      note: artist.note
     }),
   });
 }
@@ -129,6 +130,13 @@ async function apiRemoveFavorite(artistId) {
   return apiFetch(ENDPOINTS.favorites, {
     method: "DELETE",
     body: JSON.stringify({ id_artist: artistId }),
+  });
+}
+
+async function apiUpdateFavorite(artistId, note) {
+  return apiFetch(ENDPOINTS.favorites, {
+    method: "PUT",
+    body: JSON.stringify({ id_artist: artistId, note: note }),
   });
 }
 
@@ -151,7 +159,7 @@ async function apiRecommend(artistIds) {
     method: "POST",
     body: JSON.stringify({ artist_ids: artistIds }),
   });
-  const list = Array.isArray(data) ? data : (data?.results || data?.artists || []);
+  const list = Array.isArray(data) ? data : (data?.suggestions || data?.artists || []);
   return list.map(normalizeArtist);
 }
 
@@ -429,6 +437,13 @@ function buildRecordCard(artist, { removable = false, addable = false, alreadyAd
   li.appendChild(name);
 
   if (removable) {
+    const noteWrap = document.createElement("div");
+    noteWrap.className = "record-note-wrap";
+    renderNoteView(noteWrap, artist);
+    li.appendChild(noteWrap);
+  }
+
+  if (removable) {
     const btn = document.createElement("button");
     btn.className = "btn-remove";
     btn.textContent = "Remover";
@@ -451,6 +466,76 @@ function buildRecordCard(artist, { removable = false, addable = false, alreadyAd
   }
 
   return li;
+}
+
+/**
+ * Nota pessoal de um favorito — modo de exibição: mostra o texto (se
+ * houver) e um botão para editar.
+ */
+function renderNoteView(container, artist) {
+  container.innerHTML = "";
+
+  if (artist.note) {
+    const note = document.createElement("p");
+    note.className = "record-note";
+    note.textContent = artist.note;
+    container.appendChild(note);
+  }
+
+  const editBtn = document.createElement("button");
+  editBtn.className = "btn-add-small";
+  editBtn.textContent = artist.note ? "Editar nota" : "Adicionar nota";
+  editBtn.addEventListener("click", () => renderNoteEdit(container, artist));
+  container.appendChild(editBtn);
+}
+
+/**
+ * Nota pessoal de um favorito — modo de edição: campo de texto +
+ * Salvar (chama PUT fav_artist) / Cancelar.
+ */
+function renderNoteEdit(container, artist) {
+  container.innerHTML = "";
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.className = "note-input";
+  input.value = artist.note || "";
+  input.maxLength = 140;
+  input.placeholder = "Ex: descobri em um show em 2019";
+
+  const actions = document.createElement("div");
+  actions.className = "note-actions";
+
+  const saveBtn = document.createElement("button");
+  saveBtn.className = "btn-add-small";
+  saveBtn.textContent = "Salvar";
+  saveBtn.addEventListener("click", async () => {
+    const newNote = input.value.trim();
+    saveBtn.disabled = true;
+    saveBtn.textContent = "Salvando...";
+    try {
+      await apiUpdateFavorite(artist.id, newNote);
+      artist.note = newNote;
+      const cached = favoritesCache.find(a => a.id === artist.id);
+      if (cached) cached.note = newNote;
+      renderNoteView(container, artist);
+      showToast("Nota atualizada.");
+    } catch (err) {
+      if (isUnauthorized(err)) { goToLoginScreen(); return; }
+      saveBtn.disabled = false;
+      saveBtn.textContent = "Salvar";
+      showToast(`Não foi possível salvar a nota: ${err.message}`);
+    }
+  });
+
+  const cancelBtn = document.createElement("button");
+  cancelBtn.className = "btn-remove";
+  cancelBtn.textContent = "Cancelar";
+  cancelBtn.addEventListener("click", () => renderNoteView(container, artist));
+
+  actions.append(saveBtn, cancelBtn);
+  container.append(input, actions);
+  input.focus();
 }
 
 async function addFavoriteFromSearch(artist, cardEl, btnEl) {
@@ -634,6 +719,7 @@ discoverySubmitBtn.addEventListener("click", async () => {
     } else {
       const favoriteIds = new Set(favoritesCache.map(a => a.id));
       recommendations.forEach(artist => {
+        artist.note = "Sugerido à partir de " + selectedNames.join(", ");
         grid.appendChild(buildRecordCard(artist, { addable: true, alreadyAdded: favoriteIds.has(artist.id) }));
       });
     }
