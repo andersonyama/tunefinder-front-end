@@ -56,6 +56,12 @@ $ docker run -d -p 8080:80 tunefinder-front
 
 Uma vez executando, para acessar a API, basta abrir o [http://localhost:8080](http://localhost:8080) no navegador.
 
+## Arquitetura da Aplicação
+
+A aplicação completa é disponibilizada por esta interface HTML e uma API em Python, que faz a comunicação com o banco de dados em SQLite3 e a API externa [Last.fm](https://www.last.fm/api)
+
+![Arquitetura](architecture.jpg)
+
 ## Contexto Acadêmico
 
 Projeto desenvolvido para fins acadêmicos no curso de Pós-Graduação em Engenharia de Software da PUC-RIO.
