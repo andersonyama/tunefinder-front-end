@@ -54,7 +54,7 @@ Uma vez criada a imagem, para executar o container basta executar, **como admini
 $ docker run -d -p 8080:80 tunefinder-front
 ```
 
-Uma vez executando, para acessar a API, basta abrir o [http://localhost:8080](http://localhost:8080) no navegador.
+Uma vez executando, para acessar a interface da aplicação, basta abrir o [http://localhost:8080](http://localhost:8080) no navegador.
 
 ## Arquitetura da Aplicação
 
