@@ -56,6 +56,23 @@ $ docker run -d -p 8080:80 tunefinder-front
 
 Uma vez executando, para acessar a interface da aplicação, basta abrir o [http://localhost:8080](http://localhost:8080) no navegador.
 
+## Inicialização da aplicação completa através do Docker-compose
+
+Neste repositório está disponível um docker-compose para que a interface e a API sejam inicializadas em conjunto, sem necessidade de nenhuma configuração adicional.
+
+Certifique-se de ter o [Docker](https://docs.docker.com/engine/install/) instalado e em execução em sua máquina.
+
+Também se certifique de que o diretório do back-end e do front-end estejam no mesmo diretório.
+
+Navegue até o diretório que contém o `docker-compose.yaml` no terminal.
+Execute **como administrador** o seguinte comando para iniciar a aplicação:
+
+```
+$ docker-compose up --build
+```
+
+Uma vez executando, para acessar a API, basta abrir o endereço [http://localhost:5000](http://localhost:5000) no navegador, e para acessar a interface, basta abrir o endereço [http://localhost:8080](http://localhost:8080).
+
 ## Arquitetura da Aplicação
 
 A aplicação completa é disponibilizada por esta interface HTML e uma API em Python, que faz a comunicação com o banco de dados em SQLite3 e a API externa [Last.fm](https://www.last.fm/api)

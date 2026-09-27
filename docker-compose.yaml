@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ../tunefinder-back-end
+    container_name: tunefinder_backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ../tunefinder-back-end/src:/app
+    env_file:
+      - ../tunefinder-back-end/.env
+    environment:
+      - FLASK_APP=main
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    restart: unless-stopped
+
+  frontend:
+    image: nginx:alpine
+    container_name: tunefinder_frontend
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/usr/share/nginx/html
+    restart: unless-stopped
